@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "oregon-deptedu-11102022"
+version = "0.1.0"
+description = ""
+authors = ["yvan <yvanscher@gmail.com>"]
+readme = "README.md"
+packages = [{include = "oregon_deptedu_11102022"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+PyPDF2 = "^2.11.1"
+textract = "^1.6.5"
+nltk = "^3.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
