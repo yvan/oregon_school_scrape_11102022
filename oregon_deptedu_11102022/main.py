@@ -14,8 +14,13 @@ the client is looking for
   like willamina.
 - another thing to realize is that school, not district
   determines the email address.
+- you can match the names to emails (same string), and emails to phones (same data block)
+  but you will struggle to match the school to that info, becuase it comes at semi
+  random times in the stream.
+- some even have a single letter which makes you match L against every email in the 5 block spread, for example
 
-daloopa
+- string comparisons in pdb seem to take forever??
+
 """
 
 import os
@@ -119,6 +124,10 @@ def getData(textfile):
             for name in names:
                 # split on whitespace
                 ns = name.split()
+
+                # remove anything which is 1 or 2 letters
+                ns = [n for n in ns if len(n)>2]
+                
                 # for each set of name fragments
                 # create email signatures
                 emailsigs = [".".join(ns).lower()]
@@ -129,10 +138,8 @@ def getData(textfile):
                     emailsigs.append((ns[1]).lower())
                     
                 # match them
-                matches = [mail for mail,emailsig in product(mails,emailsigs) if emailsig in mail]
-                print(sd)
-                print(len(matches))
-                print()
+                matches = [mail for mail,emailsig in product(mails,emailsigs) if emailsig in mail.split("@")[0]]
+                
                 #matches = [mail for mail in mails for sig in emailsigs if sig in mail]
                 if len(matches) > 0:
                     namesEmails[sd][name] = {"district":sd,
@@ -147,7 +154,8 @@ def getData(textfile):
         print(len(namesEmails))
         print("entries with more than 0 thing")
         print(len([1 for v in namesEmails.values() if len(v) > 0]))
-           
+        with open("output.json", 'w') as f:
+            json.dump(namesEmails,f,indent=2)
 
         """
         the SD is not a good separator because sometimes (for reasons i don't understand)
