@@ -1,11 +1,11 @@
 # intro
 
-the basic issue with pdf scraping is that the data is structured visually in a way that the underlying data is not. there are different solutions to solve this. here what i use [textract](textract.readthedocs.io/) python library which uses ocr to generate a stream of text data.
+the basic issue with pdf scraping is that the data is structured visually in a way that the underlying data is not. there are different solutions to solve this. 
 
 
 # method
 
-use textract to generate the text data stream
+use textract to generate the text data stream [textract](textract.readthedocs.io/)
 then use regex to look for certain patterns to divide thise stream into blocks
 connect blocks together that may share data (name + email), blocks located close to each other in the stream
 search the blocks for connected data and produce a final structure
