@@ -1,34 +1,10 @@
-"""
--first understand how the stream of data comes out from textract or py2pdf or tabula-py
--second produce an index of this data stream, preferably in one or two passes, the index
-is like an object, database or set of relations that connects the data intelligently,
-for example by section, visually, and then drawing connections between "adjacent" sections,
-or something that can reliably map names and emails together.
--third use the index to construct a final dataset with names, emails, numbers, whatever
-the client is looking for
-- four quality control, check a sample of the output for quality, flaws, etc.
-- five get early client feedback on data quality, iterate and improve.
-- one thing is that when someone has a short name like "thao do," since
-  do appears in a bunch of other words it has a huge hit rate.
-- another thing is hits from someone's name like "will" to the name of a district
-  like willamina.
-- another thing to realize is that school, not district
-  determines the email address.
-- you can match the names to emails (same string), and emails to phones (same data block)
-  but you will struggle to match the school to that info, becuase it comes at semi
-  random times in the stream.
-- some even have a single letter which makes you match L against every email in the 5 block spread, for example
-
-- string comparisons in pdb seem to take forever??
-
-"""
-
 import os
 import re
 import json
 import textract
 from itertools import product
 from collections import OrderedDict
+
 
 def numNameMatch(name, email):
     names = name.split()
@@ -41,26 +17,22 @@ def getPdfText(inpath,outpath):
 
 def getData(textfile):
     with open(textfile, 'rb') as f:
+        # get the lines from the pdf
         lines = [line.decode('utf-8') for line in f]
+
+        # compile a regex for detecting each school district
         regex_school_district = re.compile("[a-zA-Z0-9 ]*\sSD[\sa-zA-Z0-9]*")
-        #regex_phone = re.compile("[0-9]{3}-[0-9]{3}-[0-9]{4}")
-
-        # first flag
-        fst_flag = False
-
-        testflag = False
-
-        aggblock = []
-        principals = OrderedDict()
-        previousblock = ""
-        currentblock = ""
-        blockname = ""
-        blockmail = ""
 
         # this section collects data into a dictionary, called principals
         # basically it organized the data by the names of the principals
         # so we can limit our search later to look within a particular block
         # i.e. from one _SD_ match to another
+        principals = OrderedDict()                
+        fst_flag = False
+        currentblock = ""
+        blockname = ""
+        blockmail = ""
+        aggblock = []
         
         for i,line in enumerate(lines):         
             match_sd = re.search(regex_school_district, line)
@@ -92,7 +64,8 @@ def getData(textfile):
 
                 aggblock = []
                 
-        # create previous mappings
+        # add previous and next blocks to the
+        # data because it's a bit scrambled
         windowidx = 1
         previous = []
         keys = list(principals.keys())
@@ -103,13 +76,14 @@ def getData(textfile):
                 previous.pop(0)
             previous.append(key)
             
-
+        # in this section build a dictionary
+        # of names and emails for every school
+        # district
         namesEmails = {k: {} for k in principals.keys()}
         
         # for each school district
         for sd,nm in principals.items():
-            # add values from prior
-            # and next
+            # add values from prior/next
             for nextprev in nm['previous'] + nm['next']:
                 for name, blockvalues in principals[nextprev]['names'].items():
                     if nm['names'].get(name) is None:
@@ -120,7 +94,7 @@ def getData(textfile):
             
             names = list(nm["names"].keys())
             mails = list(nm["mails"].keys())
-            
+
             for name in names:
                 # split on whitespace
                 ns = name.split()
@@ -146,26 +120,17 @@ def getData(textfile):
                                              "emails":matches,
                                              "phones":[nm["mails"][mail][:2] for mail in matches],}
                     
-        
-        # print(principals)
-        # print(namesEmails)
+
+        # print info about data
         print(json.dumps(namesEmails,indent=2))
         print("entries")
         print(len(namesEmails))
         print("entries with more than 0 thing")
         print(len([1 for v in namesEmails.values() if len(v) > 0]))
+
+        # save to a file
         with open("output.json", 'w') as f:
             json.dump(namesEmails,f,indent=2)
-
-        """
-        the SD is not a good separator because sometimes (for reasons i don't understand)
-        it reads the next one before the email section of the SD you'r currently on.
-
-        that means we need a bit of a different strategy, instead of seaching inside one "SD"
-        we can maybe search a window?? dunno.
-
-        could just try the simple thing to include... previous block and next block??
-        """
                 
             
 if __name__ == "__main__":
