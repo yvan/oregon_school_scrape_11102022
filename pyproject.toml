@@ -8,9 +8,7 @@ packages = [{include = "oregon_deptedu_11102022"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-PyPDF2 = "^2.11.1"
 textract = "^1.6.5"
-nltk = "^3.7"
 
 
 [build-system]
