@@ -10,9 +10,7 @@ the basic issue with pdf scraping is that the data is structured visually in a w
 - connect blocks together that may share data (name + email), blocks located close to each other in the stream
 - search the blocks for connected data and produce a final structure
 
-other resources:
-
-https://betterprogramming.pub/how-to-convert-pdfs-into-searchable-key-words-with-python-85aab86c544f
+# other
 
 https://tabula-py.readthedocs.io/en/latest
 
