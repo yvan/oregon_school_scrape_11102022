@@ -5,10 +5,10 @@ the basic issue with pdf scraping is that the data is structured visually in a w
 
 # method
 
-use textract to generate the text data stream [textract](textract.readthedocs.io/)
-then use regex to look for certain patterns to divide thise stream into blocks
-connect blocks together that may share data (name + email), blocks located close to each other in the stream
-search the blocks for connected data and produce a final structure
+- use textract to generate the text data stream [textract](textract.readthedocs.io/)
+- then use regex to look for certain patterns to divide thise stream into blocks
+- connect blocks together that may share data (name + email), blocks located close to each other in the stream
+- search the blocks for connected data and produce a final structure
 
 other resources:
 
