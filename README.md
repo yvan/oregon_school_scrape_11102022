@@ -13,8 +13,12 @@ the basic issue with pdf scraping is that the data is structured visually in a w
 other resources:
 
 https://betterprogramming.pub/how-to-convert-pdfs-into-searchable-key-words-with-python-85aab86c544f
-https://github.com/py-pdf/PyPDF2
-https://textract.readthedocs.io/en/stable
+
 https://tabula-py.readthedocs.io/en/latest
+
+https://textract.readthedocs.io/en/stable
+
+https://github.com/py-pdf/PyPDF2
+
 https://www.nltk.org/
 
